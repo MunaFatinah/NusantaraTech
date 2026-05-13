@@ -1,45 +1,44 @@
 services:
-
-  db:
-    image: postgres:15-alpine
-    container_name: nusantara_db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - nusantara_network
+  app:
+    build: ./app
     ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  minio:
-    image: minio/minio:latest
-    container_name: nusantara_minio
-    restart: unless-stopped
-    command: server /data --console-address ":9001"
+      - "3000:3000"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    volumes:
-      - minio_data:/data
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_USER=${MINIO_ROOT_USER}
+      - MINIO_PASSWORD=${MINIO_ROOT_PASSWORD}
+    depends_on:
+      - postgres
+      - minio
     networks:
-      - nusantara_network
+      - nusantara-network
+  postgres:
+    image: postgres:16-alpine
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - nusantara-network
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
       - "9001:9001"
-
+    env_file: .env
+    volumes:
+      - miniodata:/data
+    networks:
+      - nusantara-network
 volumes:
-  db_data:
-  minio_data:
-
+  pgdata:
+  miniodata:
 networks:
-  nusantara_network:
+  nusantara-network:
     driver: bridge
