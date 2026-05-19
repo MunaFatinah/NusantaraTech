@@ -60,5 +60,48 @@ app.delete('/mahasiswa/:id', async (req, res) => {
   }
 })
 
-app.listen(3000, () => console.log('App jalan di port 3000'))
+const Minio = require('minio')
 
+const minioClient = new Minio.Client({
+  endPoint: process.env.MINIO_ENDPOINT || 'minio',
+  port: parseInt(process.env.MINIO_PORT) || 9000,
+  useSSL: false,
+  accessKey: process.env.MINIO_USER,
+  secretKey: process.env.MINIO_PASSWORD,
+})
+
+const BUCKET_NAME = 'dokumen-mahasiswa'
+
+async function initMinio() {
+  const exists = await minioClient.bucketExists(BUCKET_NAME)
+  if (!exists) {
+    await minioClient.makeBucket(BUCKET_NAME)
+    console.log(`Bucket '${BUCKET_NAME}' berhasil dibuat`)
+  }
+}
+initMinio().catch(console.error)
+
+app.post('/upload', async (req, res) => {
+  const { nama_file, isi } = req.body
+  try {
+    const buffer = Buffer.from(isi || 'kosong')
+    await minioClient.putObject(BUCKET_NAME, nama_file, buffer)
+    res.json({ message: 'File berhasil diupload', path: `${BUCKET_NAME}/${nama_file}` })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+app.get('/files', async (req, res) => {
+  try {
+    const objects = []
+    const stream = minioClient.listObjects(BUCKET_NAME, '', true)
+    stream.on('data', obj => objects.push(obj.name))
+    stream.on('end', () => res.json({ files: objects }))
+    stream.on('error', err => res.status(500).json({ error: err.message }))
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+app.listen(3000, () => console.log('App jalan di port 3000'))
