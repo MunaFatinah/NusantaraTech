@@ -1,11 +1,12 @@
 services:
   app:
     build: ./app
+    container_name: nusantara-app
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
+      - DB_HOST=${POSTGRES_HOST}
+      - DB_PORT=${POSTGRES_PORT}
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_NAME=${POSTGRES_DB}
@@ -14,32 +15,31 @@ services:
       - MINIO_USER=${MINIO_ROOT_USER}
       - MINIO_PASSWORD=${MINIO_ROOT_PASSWORD}
     depends_on:
-      - postgres
       - minio
+    restart: unless-stopped
     networks:
       - nusantara-network
-  postgres:
-    image: postgres:16-alpine
-    env_file: .env
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./app/db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - nusantara-network
+
   minio:
     image: minio/minio
+    container_name: nusantara-minio
     command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
       - "9001:9001"
-    env_file: .env
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     volumes:
       - miniodata:/data
+    restart: unless-stopped
     networks:
       - nusantara-network
+
 volumes:
-  pgdata:
   miniodata:
+
 networks:
   nusantara-network:
+    name: nusantara-network
     driver: bridge
