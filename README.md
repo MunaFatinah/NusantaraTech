@@ -1,57 +1,58 @@
-# NusantaraTech — Sistem Informasi Akademik Mahasiswa
+# Nusantara Tech — Sistem Informasi Akademik
 
-Aplikasi berbasis web untuk manajemen data mahasiswa dan dokumen akademik, dikembangkan menggunakan Node.js, PostgreSQL, dan MinIO, serta dijalankan melalui Docker Compose.
+Aplikasi manajemen data mahasiswa berbasis Docker dengan Node.js, Supabase (PostgreSQL), dan MinIO.
 
-## Teknologi yang Digunakan
-- Node.js + Express — REST API
-- PostgreSQL — Basis data utama
-- MinIO — Penyimpanan file dan dokumen
-- Docker Compose — Orkestrasi container
+## Teknologi
+- **Node.js + Express** — REST API
+- **Supabase (PostgreSQL)** — Database cloud
+- **MinIO** — Object storage lokal (simulasi AWS S3)
+- **Docker Compose** — Orkestrasi container
 
 ## Cara Menjalankan
 
+### Prasyarat
+- Docker dan docker-compose terinstal
+- Git terinstal
+- Akses ke Supabase project (minta kredensial ke Mevya)
+
+### Langkah
+
 ```bash
-git clone https://github.com/MunaFatinah/NusantaraTech.git
-cd NusantaraTech
+git clone https://github.com/[username]/nusantara-tech.git
+cd nusantara-tech
 cp .env.example .env
-docker-compose up -d
+# Edit .env dengan kredensial Supabase dan MinIO
+nano .env
+
+# Tambahkan domain ke /etc/hosts
+echo "127.0.0.1   nusantara-tech.local" | sudo tee -a /etc/hosts
+
+# Jalankan
+docker-compose up -d --build
 ```
+
+## Akses Layanan
+
+| Layanan | URL |
+|---|---|
+| API | http://nusantara-tech.local:3000 |
+| Health Check | http://nusantara-tech.local:3000/health |
+| MinIO Dashboard | http://nusantara-tech.local:9001 |
 
 ## Endpoint API
 
-**Mahasiswa**
-- `GET /` — Memeriksa status API
-- `GET /mahasiswa` — Mengambil seluruh data mahasiswa
-- `GET /mahasiswa/:id` — Mengambil data mahasiswa berdasarkan ID
-- `POST /mahasiswa` — Menambahkan data mahasiswa baru
-- `DELETE /mahasiswa/:id` — Menghapus data mahasiswa
+| Method | URL | Keterangan |
+|---|---|---|
+| GET | /mahasiswa | Ambil semua data mahasiswa |
+| GET | /mahasiswa/:id | Ambil mahasiswa by ID |
+| POST | /mahasiswa | Tambah mahasiswa baru |
+| PUT | /mahasiswa/:id | Update data mahasiswa |
+| DELETE | /mahasiswa/:id | Hapus mahasiswa |
+| POST | /upload | Upload file ke MinIO |
+| GET | /files | Lihat daftar file di MinIO |
+| GET | /health | Cek status semua service |
 
-**File & Dokumen**
-- `POST /upload` — Mengunggah file ke MinIO
-- `GET /files` — Menampilkan daftar file yang telah diunggah
-
-## Akses Layanan
-- API: http://localhost:3000
-- Dashboard MinIO: http://localhost:9001
-
-## Progress Minggu Kedua
-
-Pada minggu kedua, pengembangan difokuskan pada implementasi fitur utama meliputi basis data, REST API, dan sistem penyimpanan file.
-
-### Pembagian Tugas
-
-**Mevya — Database**
-- Merancang skema tabel mahasiswa dan dokumen pada PostgreSQL
-- Membuat file init.sql untuk inisialisasi basis data secara otomatis
-- Memperbarui konfigurasi docker-compose untuk memuat skema basis data
-
-**Muna — Backend API**
-- Mengembangkan seluruh endpoint REST API (GET, POST, DELETE)
-- Mengintegrasikan Express dengan PostgreSQL menggunakan library pg
-- Melakukan pengujian endpoint menggunakan curl
-
-**Flora — File Storage & Dokumentasi**
-- Mengintegrasikan MinIO ke dalam aplikasi untuk fitur unggah dan penampilan daftar file
-- Mengonfigurasi pembuatan bucket secara otomatis saat aplikasi pertama kali dijalankan
-- Menyusun dokumentasi README
-
+## Anggota Tim
+- Mevya — Setup Supabase, konfigurasi environment
+- Muna — Backend API, koneksi database, validasi
+- Flora — Domain setup, MinIO, dokumentasi
