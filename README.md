@@ -53,6 +53,6 @@ docker-compose up -d --build
 | GET | /health | Cek status semua service |
 
 ## Anggota Tim
-- Mevya — Setup Supabase, konfigurasi environment
-- Muna — Backend API, koneksi database, validasi
-- Flora — Domain setup, MinIO, dokumentasi
+- Mevya Najwa Ramadona | 245150701111010 — Setup Supabase, konfigurasi environment
+- Muna Fatinah Atiqoh | 245150707111033 — Backend API, koneksi database, validasi
+- Flora Hapsari Mutiaraningrum | 245150707111033 — Setup Domain, MinIO, dokumentasi README
