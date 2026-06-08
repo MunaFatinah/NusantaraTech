@@ -3,10 +3,10 @@
 Aplikasi manajemen data mahasiswa berbasis Docker dengan Node.js, Supabase (PostgreSQL), dan MinIO.
 
 ## Teknologi
-- **Node.js + Express** — REST API
-- **Supabase (PostgreSQL)** — Database cloud
-- **MinIO** — Object storage lokal (simulasi AWS S3)
-- **Docker Compose** — Orkestrasi container
+- **Node.js + Express** - REST API
+- **Supabase (PostgreSQL)** - Database cloud
+- **MinIO** - Object storage lokal (simulasi AWS S3)
+- **Docker Compose** - Orkestrasi container
 
 ## Cara Menjalankan
 
@@ -53,6 +53,6 @@ docker-compose up -d --build
 | GET | /health | Cek status semua service |
 
 ## Anggota Tim
-- Mevya Najwa Ramadona | 245150701111010 — Setup Supabase, konfigurasi environment
-- Muna Fatinah Atiqoh | 245150707111033 — Backend API, koneksi database, validasi
-- Flora Hapsari Mutiaraningrum | 245150707111033 — Setup Domain, MinIO, dokumentasi README
+- Mevya Najwa Ramadona (245150701111010) | Setup Supabase, konfigurasi environment
+- Muna Fatinah Atiqoh (245150707111033) | Backend API, koneksi database, validasi
+- Flora Hapsari Mutiaraningrum (245150701111012) | Setup Domain, MinIO, dokumentasi README
